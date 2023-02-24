@@ -1,0 +1,87 @@
+@font-face {
+	font-family: DejaVuSansMono;
+	src: url("fonts/DejaVuSansMono.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: DejaVuSansMono;
+	src: url("fonts/DejaVuSansMono-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: DejaVuSansMono;
+	src: url("fonts/DejaVuSansMono-Oblique.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: DejaVuSansMono;
+	src: url("fonts/DejaVuSansMono-BoldOblique.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+}
+
+html {
+	font-family: DejaVuSansMono;
+	font-size: 16px;
+}
+
+body {
+	color: #839496;
+	background-color: #1d2021;
+	margin: 0px;
+}
+
+.logo {
+	width:40%;
+}
+
+#content {
+	max-width: 90vw;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+#info {
+	float: left;
+	padding-left: 30px;
+}
+
+#home {
+	float: right;
+	padding-right: 30px;
+}
+
+#main {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#copyright{
+	font-size: 75%;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+#code {
+	border: #839496 solid 2px;
+	border-radius: 10px;
+	padding: 1em;
+	background-color: #282828;
+}
+
+h1, h2, html a, html a:active, html a:visited {
+	font-weight: lighter;
+	text-align: center;
+	color: #606eb2;
+}
