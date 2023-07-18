@@ -1,0 +1,18 @@
+---
+services:
+  couchdb:
+    image: couchdb
+    container_name: obsidian_couchdb
+    restart: unless-stopped
+    user: 1000:1000
+    environment:
+      - COUCHDB_USER=${OBSIDIAN_COUCHDB_USERNAME}
+      - COUCHDB_PASSWORD=${OBSIDIAN_COUCHDB_PASSWORD}
+    volumes:
+      - "${SERVER_PATH}/obsidian/data:/opt/couchdb/data"
+      - "${SERVER_PATH}/obsidian/local.ini:/opt/couchdb/etc/local.ini"
+
+networks:
+  default:
+    name: overlay
+    external: true
