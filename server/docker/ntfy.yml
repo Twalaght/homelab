@@ -1,0 +1,16 @@
+---
+services:
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    command:
+      - serve
+    restart: unless-stopped
+    user: 1000:1000
+    volumes:
+      - ${SERVER_PATH}/ntfy:/etc/ntfy
+
+networks:
+  default:
+    external:
+      name: overlay

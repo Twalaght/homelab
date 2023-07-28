@@ -4,9 +4,8 @@ services:
     image: couchdb:latest
     container_name: obsidian_couchdb
     restart: unless-stopped
+    user: 1000:1000
     environment:
-      - PUID=1000
-      - PGID=1000
       - COUCHDB_USER=${OBSIDIAN_COUCHDB_USERNAME}
       - COUCHDB_PASSWORD=${OBSIDIAN_COUCHDB_PASSWORD}
     volumes:
@@ -17,4 +16,3 @@ networks:
   default:
     external:
       name: overlay
-
