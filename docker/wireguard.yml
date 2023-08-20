@@ -1,0 +1,27 @@
+---
+services:
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${SERVER_TIME_ZONE}
+      - SERVERURL=${SERVER_URL}
+      - PEERS=${WIREGUARD_PEERS}
+      - PEERDNS=${WIREGUARD_DNS}
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - "${SERVER_PATH}/wireguard/config:/config"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+
+networks:
+  default:
+    name: overlay
+    external: true
