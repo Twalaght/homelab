@@ -1,0 +1,43 @@
+---
+- name: Start baseline Docker containers
+  hosts: all
+
+  tasks:
+    - name: Create Docker overlay network
+      ansible.builtin.shell: >
+        docker network inspect overlay >/dev/null 2>&1 ||
+        docker network create
+        --driver=bridge
+        --subnet=172.20.0.0/16
+        --gateway=172.20.0.1
+        overlay
+
+    - name: Start Portainer
+      ansible.builtin.shell: >
+        docker volume create portainer_data &&
+        docker start portainer ||
+        docker run -d
+        -p 9000:9000
+        --name portainer
+        --restart=always
+        --network=overlay
+        -v /var/run/docker.sock:/var/run/docker.sock
+        -v portainer_data:/data
+        portainer/portainer-ce
+
+    - name: Start Watchtower
+      ansible.builtin.shell: >
+        docker start watchtower ||
+        docker run -d
+        --name watchtower
+        -v /var/run/docker.sock:/var/run/docker.sock
+        -v /etc/localtime:/etc/localtime:ro
+        containrrr/watchtower
+        --cleanup
+        --schedule="0 0 9 * * SUN"
+
+    - name: Copy Docker environment file
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../docker/docker.env"
+        dest: "{{ SERVER_DIR }}/docker.env"
+        force: false
