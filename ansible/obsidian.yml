@@ -1,0 +1,31 @@
+---
+- name: Set up Obsidian LiveSync
+  hosts: all
+  vars:
+    server_dir: toasterdog
+
+  tasks:
+    - name: Creates Obsidian directory
+      file:
+        path: "{{ server_dir }}/obsidian"
+        state: directory
+
+    - name: Copy compose and environment file
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        force: "{{ item.force }}"
+      loop:
+        - src: "../docker/obsidian.yml"
+          dest: "{{ server_dir }}/obsidian/obsidian.yml"
+          force: true
+        - src: "../docker/docker.env"
+          dest: "{{ server_dir }}/docker.env"
+          force: false
+
+    - name: Run Obsidian LiveSync server
+      ansible.builtin.shell: >
+        docker compose
+        -f "{{ server_dir }}/obsidian/obsidian.yml"
+        --env-file "{{ server_dir }}/docker.env"
+        up -d
