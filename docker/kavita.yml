@@ -1,0 +1,18 @@
+---
+services:
+  kavita:
+    image: linuxserver/kavita
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${SERVER_TIME_ZONE}
+    volumes:
+      - "${SERVER_PATH}/kavita/config:/config"
+      - "${SERVER_PATH}/kavita/data:/data"
+
+networks:
+  default:
+    name: overlay
+    external: true
