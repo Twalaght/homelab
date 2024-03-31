@@ -1,0 +1,22 @@
+---
+services:
+  caddy:
+    image: caddy
+    container_name: caddy
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/caddy/Caddyfile:/etc/caddy/Caddyfile"
+      - "${SERVER_DATA_PATH}/caddy/site:/srv"
+      - "${SERVER_DATA_PATH}/caddy/data:/data"
+      - "${SERVER_CONFIG_PATH}/caddy/config:/config"
+
+networks:
+  default:
+    name: overlay
+    external: true
