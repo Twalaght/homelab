@@ -5,12 +5,12 @@ services:
     container_name: kavita
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${SERVER_TIME_ZONE}
+      - "PUID=1000"
+      - "PGID=1000"
+      - "TZ=${SERVER_TIME_ZONE}"
     volumes:
-      - "${SERVER_PATH}/kavita/config:/config"
-      - "${SERVER_PATH}/kavita/data:/data"
+      - "${SERVER_CONFIG_PATH}/kavita:/config"
+      - "${SERVER_DATA_PATH}/kavita:/data"
 
 networks:
   default:
