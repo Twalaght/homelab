@@ -1,0 +1,14 @@
+---
+services:
+  navidrome:
+    image: deluan/navidrome
+    container_name: navidrome
+    restart: unless-stopped
+    volumes:
+      - "${SERVER_DATA_PATH}/navidrome/data:/data"
+      - "${SERVER_DATA_PATH}/navidrome/music:/music"
+
+networks:
+  default:
+    name: overlay
+    external: true
