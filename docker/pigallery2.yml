@@ -1,0 +1,16 @@
+---
+services:
+  pigallery2:
+    image: bpatrik/pigallery2
+    container_name: pigallery2
+    environment:
+      - "NODE_ENV=production"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/pigallery2:/app/data/config"
+      - "${SERVER_DATA_PATH}/pigallery2/db:/app/data/db"
+      - "${SERVER_DATA_PATH}/pigallery2/images:/app/data/images:ro"
+
+networks:
+  default:
+    name: overlay
+    external: true
