@@ -1,0 +1,99 @@
+---
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - "TZ=${SERVER_TIME_ZONE}"
+      - "VPN_SERVICE_PROVIDER=mullvad"
+      - "VPN_TYPE=wireguard"
+      - "WIREGUARD_PRIVATE_KEY=${VPN_WIREGUARD_PRIVATE_KEY}"
+      - "WIREGUARD_ADDRESSES=${VPN_WIREGUARD_ADDRESSES}"
+    ports:
+      # Settings API
+      - "8000:8000"
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:libtorrentv1
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      - "PUID=1000"
+      - "PGID=1000"
+      - "TZ=${SERVER_TIME_ZONE}"
+      - "WEBUI_PORT=8080"
+      - "TORRENTING_PORT=6881"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/qbittorrent:/config"
+      - "${SERVER_DOWNLOAD_PATH}:/downloads"
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+
+  prowlarr:
+    image: linuxserver/prowlarr
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - "PUID=1000"
+      - "PGID=1000"
+      - "TZ=${SERVER_TIME_ZONE}"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/prowlarr:/config"
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - "PUID=1000"
+      - "PGID=1000"
+      - "TZ=${SERVER_TIME_ZONE}"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/radarr:/config"
+      - "${SERVER_MEDIA_PATH}/movies:/movies"
+      - "${SERVER_DOWNLOAD_PATH}:/downloads"
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - "PUID=1000"
+      - "PGID=1000"
+      - "TZ=${SERVER_TIME_ZONE}"
+    volumes:
+      - "${SERVER_CONFIG_PATH}/sonarr:/config"
+      - "${SERVER_MEDIA_PATH}/shows:/tv"
+      - "${SERVER_DOWNLOAD_PATH}:/downloads"
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+
+  gigabasterd:
+    build: "https://github.com/Twalaght/gigabasterd.git"
+    image: gigabasterd
+    container_name: gigabasterd
+    restart: unless-stopped
+    volumes:
+      - "${SERVER_CONFIG_PATH}/gigabasterd:/config"
+      - "${SERVER_DOWNLOAD_PATH}:/output"
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+
+networks:
+  default:
+    name: overlay
+    external: true
