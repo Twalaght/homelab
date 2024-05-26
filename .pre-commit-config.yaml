@@ -1,0 +1,20 @@
+---
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    -   id: check-merge-conflict
+    -   id: check-executables-have-shebangs
+    -   id: check-shebang-scripts-are-executable
+    -   id: check-toml
+    -   id: check-yaml
+    -   id: no-commit-to-branch
+        args: [--branch, main]
+    -   id: end-of-file-fixer  # DANGER - Modifies files
+    -   id: mixed-line-ending  # DANGER - Modifies files
+        args: [--fix, auto]
+-   repo: https://github.com/lyz-code/yamlfix
+    rev: 1.16.0
+    hooks:
+    -   id: yamlfix
+        args: [--config-file, config/yamlfix.toml]
