@@ -1,0 +1,40 @@
+---
+services:
+    traefik:
+        image: traefik
+        container_name: traefik
+        restart: unless-stopped
+        ports:
+        -   80:80
+        -   443:443
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/traefik:/etc/traefik
+        -   ${SERVER_DATA_PATH}/traefik/ssl-certs:/ssl-certs
+        -   /var/run/docker.sock:/var/run/docker.sock:ro
+        environment:
+        -   CF_API_EMAIL=${CLOUDFLARE_API_EMAIL}
+        -   CF_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
+        labels:
+        # Define local-only IP allow list middleware
+        -   traefik.http.middlewares.local-only.ipallowlist.sourcerange=${LOCAL_IP_RANGES}
+        # Define auth failure redirect errors middleware
+        -   traefik.http.middlewares.auth-error.errors.status=403
+        -   traefik.http.middlewares.auth-error.errors.service=${FALLBACK_SERVICE}
+        -   traefik.http.middlewares.auth-error.errors.query=/404.html
+
+        # Expose the container
+        -   traefik.enable=true
+        # Enable TLS and set up the wildcard certificate for the domain
+        -   traefik.http.routers.traefik.tls=true
+        -   traefik.http.routers.traefik.tls.certresolver=prod-letsencrypt-dns
+        -   traefik.http.routers.traefik.tls.domains[0].main=${DOMAIN_NAME}
+        -   traefik.http.routers.traefik.tls.domains[0].sans=*.${DOMAIN_NAME}
+        # Set up the router to the Traefik API
+        -   traefik.http.routers.traefik.entrypoints=websecure
+        -   traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
+        -   traefik.http.routers.traefik.service=api@internal
+        -   traefik.http.routers.traefik.middlewares=auth-error@docker,local-only@docker
+networks:
+    default:
+        name: ${OVERLAY_NETWORK}
+        external: true
