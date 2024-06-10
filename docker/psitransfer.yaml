@@ -5,11 +5,18 @@ services:
         container_name: psitransfer
         restart: unless-stopped
         environment:
-        -   PSITRANSFER_ADMIN_PASS=${PSITRANSFER_ADMIN_PASS}
-        -   PSITRANSFER_UPLOAD_PASS=${PSITRANSFER_UPLOAD_PASS}
+        -   PSITRANSFER_ADMIN_PASS=${ADMIN_PASSWORD}
+        -   PSITRANSFER_UPLOAD_PASS=${UPLOAD_PASSWORD}
         volumes:
         -   ${SERVER_DATA_PATH}/psitransfer:/data
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.psitransfer.tls=true
+        -   traefik.http.routers.psitransfer.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.psitransfer.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.psitransfer.rule=Host(`transfer.${DOMAIN_NAME}`)
+        -   traefik.http.services.psitransfer.loadbalancer.server.port=3000
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
