@@ -12,11 +12,63 @@ services:
         -   TZ=${SERVER_TIME_ZONE}
         -   VPN_SERVICE_PROVIDER=mullvad
         -   VPN_TYPE=wireguard
-        -   WIREGUARD_PRIVATE_KEY=${VPN_WIREGUARD_PRIVATE_KEY}
-        -   WIREGUARD_ADDRESSES=${VPN_WIREGUARD_ADDRESSES}
-        ports:
-      # Settings API
-        -   8000:8000
+        -   WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+        -   WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+        labels:
+        # qBitTorrent
+        -   traefik.enable=true
+        -   traefik.http.routers.qbit.service=qbit
+        -   traefik.http.routers.qbit.tls=true
+        -   traefik.http.routers.qbit.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.qbit.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.qbit.rule=Host(`qbit.${DOMAIN_NAME}`)
+        -   traefik.http.routers.qbit.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.qbit.loadbalancer.server.port=8080
+
+        # Radarr
+        -   traefik.http.routers.radarr.service=radarr
+        -   traefik.http.routers.radarr.tls=true
+        -   traefik.http.routers.radarr.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.radarr.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)
+        -   traefik.http.routers.radarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.radarr.loadbalancer.server.port=7878
+
+        # Sonarr
+        -   traefik.http.routers.sonarr.service=sonarr
+        -   traefik.http.routers.sonarr.tls=true
+        -   traefik.http.routers.sonarr.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.sonarr.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)
+        -   traefik.http.routers.sonarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.sonarr.loadbalancer.server.port=8989
+
+        # Prowlarr
+        -   traefik.http.routers.prowlarr.service=prowlarr
+        -   traefik.http.routers.prowlarr.tls=true
+        -   traefik.http.routers.prowlarr.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.prowlarr.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)
+        -   traefik.http.routers.prowlarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.prowlarr.loadbalancer.server.port=9696
+
+        # MegaBasterd
+        -   traefik.http.routers.mega.service=mega
+        -   traefik.http.routers.mega.tls=true
+        -   traefik.http.routers.mega.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.mega.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.mega.rule=Host(`mega.${DOMAIN_NAME}`)
+        -   traefik.http.routers.mega.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.mega.loadbalancer.server.port=5800
+
+        # Firefox
+        -   traefik.http.routers.firefox.service=firefox
+        -   traefik.http.routers.firefox.tls=true
+        -   traefik.http.routers.firefox.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.firefox.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.firefox.rule=Host(`firefox.${DOMAIN_NAME}`)
+        -   traefik.http.routers.firefox.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.firefox.loadbalancer.server.port=3000
     qbittorrent:
         image: linuxserver/qbittorrent:libtorrentv1
         container_name: qbittorrent
@@ -56,8 +108,8 @@ services:
         -   TZ=${SERVER_TIME_ZONE}
         volumes:
         -   ${SERVER_CONFIG_PATH}/radarr:/config
-        -   ${SERVER_MEDIA_PATH}/movies:/movies
         -   ${SERVER_DOWNLOAD_PATH}:/downloads
+        -   ${SERVER_MEDIA_PATH}/movies:/movies
         network_mode: service:gluetun
         depends_on:
         -   gluetun
@@ -71,8 +123,8 @@ services:
         -   TZ=${SERVER_TIME_ZONE}
         volumes:
         -   ${SERVER_CONFIG_PATH}/sonarr:/config
-        -   ${SERVER_MEDIA_PATH}/shows:/tv
         -   ${SERVER_DOWNLOAD_PATH}:/downloads
+        -   ${SERVER_MEDIA_PATH}/shows:/tv
         network_mode: service:gluetun
         depends_on:
         -   gluetun
@@ -87,7 +139,21 @@ services:
         network_mode: service:gluetun
         depends_on:
         -   gluetun
+    firefox:
+        image: linuxserver/firefox
+        container_name: firefox
+        restart: unless-stopped
+        environment:
+        -   PUID=1000
+        -   PGID=1000
+        -   TZ=${SERVER_TIME_ZONE}
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/firefox:/config
+        shm_size: 1gb
+        network_mode: service:gluetun
+        depends_on:
+        -   gluetun
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
