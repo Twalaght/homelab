@@ -1,0 +1,24 @@
+---
+services:
+    homepage:
+        image: ghcr.io/gethomepage/homepage
+        container_name: homepage
+        restart: unless-stopped
+        environment:
+        -   PUID=1000
+        -   PGID=1000
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/homepage:/app/config
+        -   ${SERVER_DATA_PATH}/homepage:/app/public/icons
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.homepage.tls=true
+        -   traefik.http.routers.homepage.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.homepage.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN_NAME}`)
+        -   traefik.http.routers.homepage.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.homepage.loadbalancer.server.port=3000
+networks:
+    default:
+        name: ${OVERLAY_NETWORK}
+        external: true
