@@ -1,0 +1,23 @@
+---
+services:
+    pigallery:
+        image: bpatrik/pigallery2
+        container_name: pigallery
+        restart: unless-stopped
+        environment:
+        -   NODE_ENV=production
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/pigallery:/app/data/config
+        -   ${SERVER_DATA_PATH}/pigallery/db:/app/data/db
+        -   ${SERVER_DATA_PATH}/pigallery/images:/app/data/images:ro
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.photos.tls=true
+        -   traefik.http.routers.photos.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.photos.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.photos.rule=Host(`photos.${DOMAIN_NAME}`)
+        -   traefik.http.services.photos.loadbalancer.server.port=80
+networks:
+    default:
+        name: ${OVERLAY_NETWORK}
+        external: true
