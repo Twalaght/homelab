@@ -7,6 +7,7 @@ services:
         ports:
         -   80:80
         -   443:443
+        -   9001:8080
         volumes:
         -   ${SERVER_CONFIG_PATH}/traefik:/etc/traefik
         -   ${SERVER_DATA_PATH}/traefik/ssl-certs:/ssl-certs
@@ -26,14 +27,14 @@ services:
         -   traefik.enable=true
         # Enable TLS and set up the wildcard certificate for the domain
         -   traefik.http.routers.traefik.tls=true
-        -   traefik.http.routers.traefik.tls.certresolver=prod-letsencrypt-dns
+        -   traefik.http.routers.traefik.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.traefik.tls.domains[0].main=${DOMAIN_NAME}
         -   traefik.http.routers.traefik.tls.domains[0].sans=*.${DOMAIN_NAME}
         # Set up the router to the Traefik API
-        -   traefik.http.routers.traefik.entrypoints=websecure
+        -   traefik.http.routers.traefik.entrypoints=${HTTPS_ENTRY}
         -   traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
         -   traefik.http.routers.traefik.service=api@internal
-        -   traefik.http.routers.traefik.middlewares=auth-error@docker,local-only@docker
+        -   traefik.http.routers.traefik.middlewares=${MIDDLEWARE_PRIVATE}
 networks:
     default:
         name: ${OVERLAY_NETWORK}
