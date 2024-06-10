@@ -11,7 +11,14 @@ services:
         volumes:
         -   ${SERVER_CONFIG_PATH}/kavita:/config
         -   ${SERVER_DATA_PATH}/kavita:/data
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.kavita.tls=true
+        -   traefik.http.routers.kavita.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.kavita.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.kavita.rule=Host(`kavita.${DOMAIN_NAME}`)
+        -   traefik.http.services.kavita.loadbalancer.server.port=5000
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
