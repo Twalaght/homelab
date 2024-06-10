@@ -4,18 +4,37 @@ services:
         image: caddy
         container_name: caddy
         restart: unless-stopped
-        cap_add:
-        -   NET_ADMIN
-        ports:
-        -   80:80
-        -   443:443
-        -   443:443/udp
         volumes:
         -   ${SERVER_CONFIG_PATH}/caddy/Caddyfile:/etc/caddy/Caddyfile
+        -   ${SERVER_CONFIG_PATH}/caddy/config:/config
         -   ${SERVER_DATA_PATH}/caddy/site:/srv
         -   ${SERVER_DATA_PATH}/caddy/data:/data
-        -   ${SERVER_CONFIG_PATH}/caddy/config:/config
+        labels:
+        # Expose the container
+        -   traefik.enable=true
+
+        # Handle regular trafic to the domain without any subdomain
+        -   traefik.http.routers.caddy.service=caddy
+        -   traefik.http.routers.caddy.tls=true
+        -   traefik.http.routers.caddy.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.caddy.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.caddy.rule=Host(`${DOMAIN_NAME}`)
+        -   traefik.http.services.caddy.loadbalancer.server.port=80
+
+        # Define middleware to redirect to the 404 page
+        -   traefik.http.middlewares.404-redirect.redirectregex.regex=^.*$
+        -   traefik.http.middlewares.404-redirect.redirectregex.replacement=https://${DOMAIN_NAME}/404.html
+
+        # Define the catchall service for invalid requests
+        -   traefik.http.routers.fallback.service=fallback
+        -   traefik.http.routers.fallback.tls=true
+        -   traefik.http.routers.fallback.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.fallback.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.fallback.priority=1
+        -   traefik.http.routers.fallback.rule=HostRegexp(`(?i)^.*.?${DOMAIN_NAME}$`)
+        -   traefik.http.routers.fallback.middlewares=404-redirect
+        -   traefik.http.services.fallback.loadbalancer.server.port=80
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
