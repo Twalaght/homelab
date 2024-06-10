@@ -8,14 +8,25 @@ services:
         ports:
         -   53:53/tcp
         -   53:53/udp
-        -   9009:80
+        -   9002:80
         environment:
         -   TZ=${SERVER_TIME_ZONE}
-        -   WEBPASSWORD=${PIHOLE_WEB_PASSWORD}
+        -   WEBPASSWORD=${WEB_PASSWORD}
         volumes:
         -   ${SERVER_CONFIG_PATH}/pihole/pihole:/etc/pihole
         -   ${SERVER_CONFIG_PATH}/pihole/dnsmasq.d:/etc/dnsmasq.d
+        networks:
+            default:
+                ipv4_address: ${DNS_SERVER}
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.pi-hole.tls=true
+        -   traefik.http.routers.pi-hole.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.pi-hole.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.pi-hole.rule=Host(`pihole.${DOMAIN_NAME}`)
+        -   traefik.http.routers.pi-hole.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.pi-hole.loadbalancer.server.port=80
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
