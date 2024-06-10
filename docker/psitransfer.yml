@@ -1,16 +1,15 @@
 ---
 services:
-  psitransfer:
-    image: psitrax/psitransfer
-    container_name: psitransfer
-    restart: unless-stopped
-    environment:
-      - "PSITRANSFER_ADMIN_PASS=${PSITRANSFER_ADMIN_PASS}"
-      - "PSITRANSFER_UPLOAD_PASS=${PSITRANSFER_UPLOAD_PASS}"
-    volumes:
-      - "${SERVER_DATA_PATH}/psitransfer:/data"
-
+    psitransfer:
+        image: psitrax/psitransfer
+        container_name: psitransfer
+        restart: unless-stopped
+        environment:
+        -   PSITRANSFER_ADMIN_PASS=${PSITRANSFER_ADMIN_PASS}
+        -   PSITRANSFER_UPLOAD_PASS=${PSITRANSFER_UPLOAD_PASS}
+        volumes:
+        -   ${SERVER_DATA_PATH}/psitransfer:/data
 networks:
-  default:
-    name: overlay
-    external: true
+    default:
+        name: overlay
+        external: true

@@ -1,22 +1,21 @@
 ---
 services:
-  pihole:
-    container_name: pihole
-    image: pihole/pihole
-    restart: unless-stopped
-    dns: "127.0.0.1"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "9009:80"
-    environment:
-      - "TZ=${SERVER_TIME_ZONE}"
-      - "WEBPASSWORD=${PIHOLE_WEB_PASSWORD}"
-    volumes:
-      - "${SERVER_CONFIG_PATH}/pihole/pihole:/etc/pihole"
-      - "${SERVER_CONFIG_PATH}/pihole/dnsmasq.d:/etc/dnsmasq.d"
-
+    pihole:
+        container_name: pihole
+        image: pihole/pihole
+        restart: unless-stopped
+        dns: 127.0.0.1
+        ports:
+        -   53:53/tcp
+        -   53:53/udp
+        -   9009:80
+        environment:
+        -   TZ=${SERVER_TIME_ZONE}
+        -   WEBPASSWORD=${PIHOLE_WEB_PASSWORD}
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/pihole/pihole:/etc/pihole
+        -   ${SERVER_CONFIG_PATH}/pihole/dnsmasq.d:/etc/dnsmasq.d
 networks:
-  default:
-    name: overlay
-    external: true
+    default:
+        name: overlay
+        external: true
