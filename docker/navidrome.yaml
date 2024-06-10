@@ -6,8 +6,15 @@ services:
         restart: unless-stopped
         volumes:
         -   ${SERVER_DATA_PATH}/navidrome/data:/data
-        -   ${SERVER_DATA_PATH}/navidrome/music:/music
+        -   ${SERVER_DATA_PATH}/navidrome/music:/music:ro
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.navidrome.tls=true
+        -   traefik.http.routers.navidrome.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.navidrome.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.navidrome.rule=Host(`navidrome.${DOMAIN_NAME}`)
+        -   traefik.http.services.navidrome.loadbalancer.server.port=4533
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
