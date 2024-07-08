@@ -1,0 +1,44 @@
+---
+services:
+    jellyfin:
+        image: jellyfin/jellyfin
+        container_name: jellyfin
+        restart: unless-stopped
+        environment:
+        -   PUID=1000
+        -   PGID=1000
+        -   TZ=${SERVER_TIME_ZONE}
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/jellyfin:/config
+        -   ${SERVER_DATA_PATH}/jellyfin:/data/jellyfin
+        -   ${SERVER_MEDIA_PATH}/movies:/data/movies
+        -   ${SERVER_MEDIA_PATH}/shows:/data/shows
+        -   ${SERVER_MEDIA_PATH}/misc:/data/misc
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.jellyfin.tls=true
+        -   traefik.http.routers.jellyfin.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.jellyfin.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN_NAME}`)
+        -   traefik.http.routers.jellyfin.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    jellyseerr:
+        image: fallenbagel/jellyseerr
+        container_name: jellyseerr
+        restart: unless-stopped
+        environment:
+        -   TZ=${SERVER_TIME_ZONE}
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/jellyseer:/app/config
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.jellyseer.tls=true
+        -   traefik.http.routers.jellyseer.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.jellyseer.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.jellyseer.rule=Host(`jellyseer.${DOMAIN_NAME}`)
+        -   traefik.http.routers.jellyseer.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.services.jellyseer.loadbalancer.server.port=5055
+networks:
+    default:
+        name: overlay
+        external: true
