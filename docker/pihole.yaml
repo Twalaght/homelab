@@ -6,8 +6,6 @@ services:
         restart: unless-stopped
         dns: 127.0.0.1
         ports:
-        -   53:53/tcp
-        -   53:53/udp
         -   9002:80
         environment:
         -   TZ=${SERVER_TIME_ZONE}
@@ -17,7 +15,7 @@ services:
         -   ${SERVER_CONFIG_PATH}/pihole/dnsmasq.d:/etc/dnsmasq.d
         networks:
             default:
-                ipv4_address: ${DNS_SERVER}
+                ipv4_address: ${DNS_SERVER_SECONDARY}
         labels:
         -   traefik.enable=true
         -   traefik.http.routers.pi-hole.tls=true
