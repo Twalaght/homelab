@@ -17,7 +17,7 @@ services:
         -   WG_HOST=${DOMAIN_NAME}
         -   PASSWORD=${WEB_PASSWORD}
         -   WG_DEFAULT_ADDRESS=${WG_DEFAULT_ADDRESS}
-        -   WG_DEFAULT_DNS=${DNS_SERVER}
+        -   WG_DEFAULT_DNS=${DNS_SERVER_PRIMARY}
         -   UI_TRAFFIC_STATS=true
         -   UI_CHART_TYPE=2
         volumes:
