@@ -1,0 +1,23 @@
+---
+services:
+    bind9:
+        container_name: bind9
+        image: ubuntu/bind9
+        restart: unless-stopped
+        environment:
+        -   BIND9_USER=root
+        -   TZ=${SERVER_TIME_ZONE}
+        ports:
+        -   53:53/tcp
+        -   53:53/udp
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/bind9/config:/etc/bind
+        -   ${SERVER_CONFIG_PATH}/bind9/cache:/var/cache/bind
+        -   ${SERVER_CONFIG_PATH}/bind9/records:/var/lib/bind
+        networks:
+            default:
+                ipv4_address: ${DNS_SERVER_PRIMARY}
+networks:
+    default:
+        name: overlay
+        external: true
