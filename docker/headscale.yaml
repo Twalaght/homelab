@@ -1,0 +1,38 @@
+---
+services:
+    headscale:
+        image: headscale/headscale:0.22.3
+        container_name: headscale
+        restart: unless-stopped
+        command: headscale serve
+        volumes:
+        -   ${SERVER_CONFIG_PATH}/headscale:/etc/headscale
+        -   ${SERVER_DATA_PATH}/headscale:/var/lib/headscale
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.headscale.tls=true
+        -   traefik.http.routers.headscale.tls.certresolver=${CERT_RES_DNS}
+        -   traefik.http.routers.headscale.rule=Host(`headscale.${DOMAIN_NAME}`)
+        -   traefik.http.services.headscale.loadbalancer.server.port=8080
+    tailscale:
+        image: tailscale/tailscale
+        container_name: tailscale
+        restart: unless-stopped
+        hostname: headtailscale
+        dns: ${DNS_SERVER_PRIMARY}
+        cap_add:
+        -   NET_ADMIN
+        -   NET_RAW
+        volumes:
+        -   ${SERVER_DATA_PATH}/tailscale:/var/lib/tailscale
+        -   /dev/net/tun:/dev/net/tun
+        environment:
+        -   TS_STATE_DIR=/var/lib/tailscale
+        -   TS_NO_LOGS_NO_SUPPORT=true
+        -   TS_EXTRA_ARGS=--login-server=https://headscale.${DOMAIN_NAME} --advertise-exit-node --advertise-routes=${TAILSCALE_ROUTES}
+            --accept-dns=true
+        -   TS_AUTHKEY=${TAILSCALE_AUTHKEY}
+networks:
+    default:
+        name: overlay
+        external: true
