@@ -21,8 +21,7 @@ services:
         -   traefik.http.routers.pi-hole.tls=true
         -   traefik.http.routers.pi-hole.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.pi-hole.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.pi-hole.rule=Host(`pihole.${DOMAIN_NAME}`)
-        -   traefik.http.routers.pi-hole.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.pi-hole.rule=Host(`pihole.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.pi-hole.loadbalancer.server.port=80
 networks:
     default:

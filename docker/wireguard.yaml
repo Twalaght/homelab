@@ -27,8 +27,7 @@ services:
         -   traefik.http.routers.wireguard.tls=true
         -   traefik.http.routers.wireguard.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.wireguard.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.wireguard.rule=Host(`wireguard.${DOMAIN_NAME}`)
-        -   traefik.http.routers.wireguard.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.wireguard.rule=Host(`wireguard.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.wireguard.loadbalancer.server.port=51821
 networks:
     default:

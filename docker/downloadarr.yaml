@@ -21,8 +21,7 @@ services:
         -   traefik.http.routers.qbit.tls=true
         -   traefik.http.routers.qbit.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.qbit.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.qbit.rule=Host(`qbit.${DOMAIN_NAME}`)
-        -   traefik.http.routers.qbit.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.qbit.rule=Host(`qbit.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.qbit.loadbalancer.server.port=8080
 
         # Radarr
@@ -30,8 +29,7 @@ services:
         -   traefik.http.routers.radarr.tls=true
         -   traefik.http.routers.radarr.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.radarr.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)
-        -   traefik.http.routers.radarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.radarr.loadbalancer.server.port=7878
 
         # Sonarr
@@ -39,8 +37,7 @@ services:
         -   traefik.http.routers.sonarr.tls=true
         -   traefik.http.routers.sonarr.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.sonarr.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)
-        -   traefik.http.routers.sonarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.sonarr.loadbalancer.server.port=8989
 
         # Prowlarr
@@ -48,8 +45,7 @@ services:
         -   traefik.http.routers.prowlarr.tls=true
         -   traefik.http.routers.prowlarr.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.prowlarr.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)
-        -   traefik.http.routers.prowlarr.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.prowlarr.loadbalancer.server.port=9696
 
         # MegaBasterd
@@ -57,8 +53,7 @@ services:
         -   traefik.http.routers.mega.tls=true
         -   traefik.http.routers.mega.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.mega.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.mega.rule=Host(`mega.${DOMAIN_NAME}`)
-        -   traefik.http.routers.mega.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.mega.rule=Host(`mega.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.mega.loadbalancer.server.port=5800
 
         # Firefox
@@ -66,8 +61,7 @@ services:
         -   traefik.http.routers.firefox.tls=true
         -   traefik.http.routers.firefox.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.firefox.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.firefox.rule=Host(`firefox.${DOMAIN_NAME}`)
-        -   traefik.http.routers.firefox.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.firefox.rule=Host(`firefox.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.firefox.loadbalancer.server.port=3000
     qbittorrent:
         image: linuxserver/qbittorrent:libtorrentv1

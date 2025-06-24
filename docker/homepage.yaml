@@ -15,8 +15,7 @@ services:
         -   traefik.http.routers.homepage.tls=true
         -   traefik.http.routers.homepage.tls.certresolver=${CERT_RES_DNS}
         -   traefik.http.routers.homepage.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN_NAME}`)
-        -   traefik.http.routers.homepage.middlewares=${MIDDLEWARE_PRIVATE}
+        -   traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
         -   traefik.http.services.homepage.loadbalancer.server.port=3000
 networks:
     default:
