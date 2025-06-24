@@ -40,5 +40,5 @@ services:
         -   traefik.http.services.jellyseer.loadbalancer.server.port=5055
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true

@@ -34,5 +34,5 @@ services:
         -   TS_AUTHKEY=${TAILSCALE_AUTHKEY}
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true

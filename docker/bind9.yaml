@@ -19,5 +19,5 @@ services:
                 ipv4_address: ${DNS_SERVER_PRIMARY}
 networks:
     default:
-        name: overlay
+        name: ${OVERLAY_NETWORK}
         external: true
