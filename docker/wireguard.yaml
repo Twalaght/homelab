@@ -2,7 +2,7 @@
 services:
     wireguard:
         container_name: wireguard
-        image: ghcr.io/wg-easy/wg-easy
+        image: ghcr.io/wg-easy/wg-easy:7
         restart: unless-stopped
         cap_add:
         -   NET_ADMIN
