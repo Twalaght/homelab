@@ -1,0 +1,66 @@
+---
+log:
+    level: ERROR
+global:
+    checkNewVersion: true
+    sendAnonymousUsage: false
+api:
+    dashboard: true
+    insecure: false
+entrypoints:
+    web:
+        address: :80
+        http:
+            redirections:
+                entryPoint:
+                    to: websecure
+                    scheme: https
+    websecure:
+        address: :443
+        proxyProtocol:
+            # Accept proxy protocol from clients (e.g., from a CDN or load balancer)
+            insecure: true
+        forwardedHeaders:
+            # Trust these IP ranges for reading X-Forwarded-* headers
+            trustedIPs:
+            -   10.0.0.0/8
+            -   172.20.0.0/16
+            -   192.168.0.0/16
+            -   127.0.0.1/32
+certificatesResolvers:
+    staging-letsencrypt:
+        acme:
+            email: ''
+            storage: /ssl-certs/acme.json
+            caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+            httpChallenge:
+                entrypoint: web
+    prod-letsencrypt:
+        acme:
+            email: ''
+            storage: /ssl-certs/acme.json
+            caServer: https://acme-v02.api.letsencrypt.org/directory
+            httpChallenge:
+                entrypoint: web
+    staging-letsencrypt-dns:
+        acme:
+            email: ''
+            storage: /ssl-certs/acme-dns.json
+            caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+            dnsChallenge:
+                provider: cloudflare
+    prod-letsencrypt-dns:
+        acme:
+            email: ''
+            storage: /ssl-certs/prod-acme-dns.json
+            caServer: https://acme-v02.api.letsencrypt.org/directory
+            dnsChallenge:
+                provider: cloudflare
+serversTransport:
+    insecureSkipVerify: true
+providers:
+    docker:
+        exposedByDefault: false
+    file:
+        filename: /etc/traefik/dynamic.yml
+        watch: true
