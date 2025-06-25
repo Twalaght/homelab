@@ -17,4 +17,4 @@ repos:
     rev: 1.16.0
     hooks:
     -   id: yamlfix
-        args: [--config-file, config/yamlfix.toml]
+        args: [--config-file, .yamlfix.toml]

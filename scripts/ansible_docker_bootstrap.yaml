@@ -11,7 +11,7 @@
             --gateway=172.20.0.1
             overlay
     -   name: Start Portainer
-        ansible.builtin.shell: >
+        ansible.builtin.shell: >-
             docker volume create portainer_data &&
             docker start portainer ||
             docker run -d
@@ -22,18 +22,3 @@
             -v /var/run/docker.sock:/var/run/docker.sock
             -v portainer_data:/data
             portainer/portainer-ce
-    -   name: Start Watchtower
-        ansible.builtin.shell: >
-            docker start watchtower ||
-            docker run -d
-            --name watchtower
-            -v /var/run/docker.sock:/var/run/docker.sock
-            -v /etc/localtime:/etc/localtime:ro
-            containrrr/watchtower
-            --cleanup
-            --schedule="0 0 9 * * SUN"
-    -   name: Copy Docker environment file
-        ansible.builtin.copy:
-            src: '{{ playbook_dir }}/../docker/docker.env'
-            dest: '{{ SERVER_DIR }}/docker.env'
-            force: false

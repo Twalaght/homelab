@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Update the DNS records for a domain on namecheap
 DOMAIN=""
 NC_PWD=""
 
 # Get the registered IP in DNS and the our current public IP
-dns_ip=$(dig $DOMAIN +short)
+dns_ip=$(dig "$DOMAIN" +short)
 public_ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
 echo "DNS IP:    $dns_ip"
 echo "Public IP: $public_ip"
