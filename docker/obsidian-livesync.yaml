@@ -2,7 +2,7 @@
 services:
     obsidian_couchdb:
         image: couchdb
-        container_name: obsidian_couchdb
+        container_name: obsidian_livesync
         restart: unless-stopped
         user: 1000:1000
         environment:
@@ -13,11 +13,9 @@ services:
         -   ${SERVER_CONFIG_PATH}/obsidian/local.ini:/opt/couchdb/etc/local.ini
         labels:
         -   traefik.enable=true
-        -   traefik.http.routers.obsidian_couchdb.tls=true
-        -   traefik.http.routers.obsidian_couchdb.tls.certresolver=${CERT_RES_DNS}
-        -   traefik.http.routers.obsidian_couchdb.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.obsidian_couchdb.rule=Host(`obsidian.${DOMAIN_NAME}`)
-        -   traefik.http.services.obsidian_couchdb.loadbalancer.server.port=5984
+        -   traefik.http.routers.obsidian_livesync.entrypoints=public
+        -   traefik.http.routers.obsidian_livesync.rule=Host(`obsidian.${DOMAIN_NAME}`)
+        -   traefik.http.services.obsidian_livesync.loadbalancer.server.port=5984
 networks:
     default:
         name: ${OVERLAY_NETWORK}
