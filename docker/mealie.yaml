@@ -1,0 +1,27 @@
+---
+services:
+    mealie:
+        image: hkotel/mealie
+        container_name: mealie
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    memory: 1000M
+        environment:
+        -   ALLOW_SIGNUP=false
+        -   PUID=1000
+        -   PGID-1000
+        -   TZ=${SERVER_TIME_ZONE}
+        -   BASE_URL=https://mealie.${DOMAIN_NAME}
+        volumes:
+        -   ${SERVER_DATA_PATH}/mealie:/app/data
+        labels:
+        -   traefik.enable=true
+        -   traefik.http.routers.mealie.entrypoints=private
+        -   traefik.http.routers.mealie.rule=Host(`mealie.${DOMAIN_NAME}`)
+        -   traefik.http.services.mealie.loadbalancer.server.port=9000
+networks:
+    default:
+        name: ${OVERLAY_NETWORK}
+        external: true
