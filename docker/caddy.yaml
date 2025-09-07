@@ -14,9 +14,7 @@ services:
         -   traefik.enable=true
         # Handle regular trafic to the domain without any subdomain
         -   traefik.http.routers.caddy.service=caddy
-        -   traefik.http.routers.caddy.tls=true
-        -   traefik.http.routers.caddy.tls.certresolver=${CERT_RES_DNS}
-        -   traefik.http.routers.caddy.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.caddy.entrypoints=public
         -   traefik.http.routers.caddy.rule=Host(`${DOMAIN_NAME}`)
         -   traefik.http.services.caddy.loadbalancer.server.port=80
         # Define middleware to redirect to the 404 page
@@ -24,9 +22,7 @@ services:
         -   traefik.http.middlewares.404-redirect.redirectregex.replacement=https://${DOMAIN_NAME}/404.html
         # Define the catchall service for invalid requests
         -   traefik.http.routers.fallback.service=fallback
-        -   traefik.http.routers.fallback.tls=true
-        -   traefik.http.routers.fallback.tls.certresolver=${CERT_RES_DNS}
-        -   traefik.http.routers.fallback.entrypoints=${HTTPS_ENTRY}
+        -   traefik.http.routers.fallback.entrypoints=public
         -   traefik.http.routers.fallback.priority=1
         -   traefik.http.routers.fallback.rule=HostRegexp(`(?i)^.*.?${DOMAIN_NAME}$`)
         -   traefik.http.routers.fallback.middlewares=404-redirect
