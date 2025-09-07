@@ -17,8 +17,8 @@ entrypoints:
                     scheme: https
     websecure:
         address: :443
+        # Accept proxy protocol from clients (e.g., from a CDN or load balancer)
         proxyProtocol:
-            # Accept proxy protocol from clients (e.g., from a CDN or load balancer)
             insecure: true
         forwardedHeaders:
             # Trust these IP ranges for reading X-Forwarded-* headers
@@ -27,6 +27,10 @@ entrypoints:
             -   172.20.0.0/16
             -   192.168.0.0/16
             -   127.0.0.1/32
+    private:
+        address: :621
+    public:
+        address: :666
 certificatesResolvers:
     staging-letsencrypt:
         acme:
@@ -49,6 +53,8 @@ certificatesResolvers:
             caServer: https://acme-staging-v02.api.letsencrypt.org/directory
             dnsChallenge:
                 provider: cloudflare
+                resolvers:
+                -   1.1.1.1:53
     prod-letsencrypt-dns:
         acme:
             email: ''
@@ -56,11 +62,13 @@ certificatesResolvers:
             caServer: https://acme-v02.api.letsencrypt.org/directory
             dnsChallenge:
                 provider: cloudflare
+                resolvers:
+                -   1.1.1.1:53
 serversTransport:
     insecureSkipVerify: true
 providers:
     docker:
         exposedByDefault: false
     file:
-        filename: /etc/traefik/dynamic.yml
+        directory: /etc/traefik/dynamic
         watch: true

@@ -1,0 +1,34 @@
+---
+http:
+    routers:
+        catchall_private:
+            entryPoints:
+            -   websecure
+            tls:
+                certResolver: prod-letsencrypt-dns
+            rule: HostRegexp(`(?i)^.*.?DOMAIN_NAME$`) && (ClientIP(`10.0.0.0/8`) || ClientIP(`172.20.0.0/16`) || ClientIP(`192.168.0.0/16`))
+            service: private_entrypoint
+            priority: 400
+        catchall_public:
+            entryPoints:
+            -   websecure
+            tls:
+                certResolver: prod-letsencrypt-dns
+            rule: HostRegexp(`(?i)^.*.?DOMAIN_NAME$`)
+            service: public_entrypoint
+            priority: 399
+        public_access_from_private:
+            entryPoints:
+            -   private
+            rule: HostRegexp(`(?i)^.*.?DOMAIN_NAME$`)
+            service: public_entrypoint
+            priority: 2
+    services:
+        private_entrypoint:
+            loadBalancer:
+                servers:
+                -   url: http://127.0.0.1:621
+        public_entrypoint:
+            loadBalancer:
+                servers:
+                -   url: http://127.0.0.1:666
