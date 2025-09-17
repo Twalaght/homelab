@@ -7,7 +7,7 @@ services:
         ports:
         -   80:80
         -   443:443
-        -   9001:8080
+        -   9009:8080
         environment:
         -   CF_API_EMAIL=${CLOUDFLARE_API_EMAIL}
         -   CF_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
@@ -16,19 +16,10 @@ services:
         -   ${SERVER_DATA_PATH}/traefik/ssl-certs:/ssl-certs
         -   /var/run/docker.sock:/var/run/docker.sock:ro
         labels:
-        # Expose the container
         -   traefik.enable=true
-        # Enable TLS and set up the wildcard certificate for the domain
-        -   traefik.http.routers.traefik.tls=true
-        -   traefik.http.routers.traefik.tls.certresolver=${CERT_RES_DNS}
-        -   traefik.http.routers.traefik.tls.domains[0].main=${DOMAIN_NAME}
-        -   traefik.http.routers.traefik.tls.domains[0].sans=*.${DOMAIN_NAME}
-        # Set up the router to the Traefik API
-        -   traefik.http.routers.traefik.entrypoints=${HTTPS_ENTRY}
-        -   traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`) && ${TRUSTED_CLIENT_IPS}
+        -   traefik.http.routers.traefik.entrypoints=private
+        -   traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
         -   traefik.http.routers.traefik.service=api@internal
-        # TODO - Unsure if needed
-        -   traefik.http.routers.traefik.priority=999999
 networks:
     default:
         name: ${OVERLAY_NETWORK}
