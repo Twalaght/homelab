@@ -7,6 +7,7 @@ services:
         environment:
         -   PUID=1000
         -   PGID=1000
+        -   HOMEPAGE_ALLOWED_HOSTS=*
         volumes:
         -   ${SERVER_CONFIG_PATH}/homepage:/app/config
         -   ${SERVER_DATA_PATH}/homepage:/app/public/icons
