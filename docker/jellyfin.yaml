@@ -1,7 +1,7 @@
 ---
 services:
     jellyfin:
-        image: jellyfin/jellyfin
+        image: jellyfin/jellyfin:latest
         container_name: jellyfin
         restart: unless-stopped
         devices:
@@ -16,11 +16,10 @@ services:
         -   ${SERVER_DATA_PATH}/jellyfin/data:/data/jellyfin
         -   ${SERVER_CACHE_PATH}/jellyfin/cache:/cache
         -   ${SERVER_CACHE_PATH}/jellyfin/metadata:/data/jellyfin/metadata
-        -   ${SERVER_MEDIA_PATH}/movies:/data/movies
-        -   ${SERVER_MEDIA_PATH}/shows:/data/shows
-        -   ${SERVER_MEDIA_PATH}/misc:/data/misc
+        -   ${NAS_MEDIA_PATH}/main:/data/nas_main:ro
         -   ${NAS_MEDIA_PATH}/movies:/data/nas_movies
         -   ${NAS_MEDIA_PATH}/shows:/data/nas_shows
+        -   ${NAS_MEDIA_PATH}/misc:/data/nas_misc
         labels:
         -   traefik.enable=true
         -   traefik.http.routers.jellyfin.entrypoints=private
