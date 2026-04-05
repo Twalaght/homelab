@@ -1,7 +1,7 @@
 ---
 services:
     gluetun:
-        image: qmcgaw/gluetun
+        image: qmcgaw/gluetun:latest
         container_name: gluetun
         restart: unless-stopped
         cap_add:
@@ -37,7 +37,7 @@ services:
         -   traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)
         -   traefik.http.services.sonarr.loadbalancer.server.port=8989
     qbittorrent:
-        image: linuxserver/qbittorrent:libtorrentv1
+        image: linuxserver/qbittorrent:5.1.4-libtorrentv1
         container_name: qbittorrent
         restart: unless-stopped
         environment:
@@ -48,13 +48,13 @@ services:
         -   TORRENTING_PORT=6881
         volumes:
         -   ${SERVER_CONFIG_PATH}/qbittorrent:/config
-        -   ${SERVER_MEDIA_PATH}/torrents:/media/torrents
+        -   ${NAS_MEDIA_PATH}/torrents:/media/torrents
         network_mode: service:gluetun
         depends_on:
             gluetun:
                 condition: service_healthy
     prowlarr:
-        image: linuxserver/prowlarr
+        image: linuxserver/prowlarr:2.3.5-nightly
         container_name: prowlarr
         restart: unless-stopped
         environment:
@@ -68,7 +68,7 @@ services:
             gluetun:
                 condition: service_healthy
     radarr:
-        image: linuxserver/radarr
+        image: linuxserver/radarr:6.1.2-develop
         container_name: radarr
         restart: unless-stopped
         environment:
@@ -77,14 +77,13 @@ services:
         -   TZ=${SERVER_TIME_ZONE}
         volumes:
         -   ${SERVER_CONFIG_PATH}/radarr:/config
-        -   ${SERVER_MEDIA_PATH}:/media
-        -   ${NAS_MEDIA_PATH}:/media_nas
+        -   ${NAS_MEDIA_PATH}:/media
         network_mode: service:gluetun
         depends_on:
             gluetun:
                 condition: service_healthy
     sonarr:
-        image: linuxserver/sonarr
+        image: linuxserver/sonarr:4.0.17-develop
         container_name: sonarr
         restart: unless-stopped
         environment:
@@ -93,8 +92,7 @@ services:
         -   TZ=${SERVER_TIME_ZONE}
         volumes:
         -   ${SERVER_CONFIG_PATH}/sonarr:/config
-        -   ${SERVER_MEDIA_PATH}:/media
-        -   ${NAS_MEDIA_PATH}:/media_nas
+        -   ${NAS_MEDIA_PATH}:/media
         network_mode: service:gluetun
         depends_on:
             gluetun:

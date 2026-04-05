@@ -1,7 +1,7 @@
 ---
 services:
     navidrome:
-        image: deluan/navidrome
+        image: deluan/navidrome:develop
         container_name: navidrome
         restart: unless-stopped
         volumes:

@@ -1,7 +1,7 @@
 ---
 services:
     headscale:
-        image: headscale/headscale:v0.25.1
+        image: headscale/headscale:0.28.0
         container_name: headscale
         restart: unless-stopped
         command: serve
@@ -14,7 +14,7 @@ services:
         -   traefik.http.routers.headscale.rule=Host(`headscale.${DOMAIN_NAME}`)
         -   traefik.http.services.headscale.loadbalancer.server.port=8080
     headplane:
-        image: ghcr.io/tale/headplane:0.5.10
+        image: ghcr.io/tale/headplane:0.6.2
         container_name: headplane
         restart: unless-stopped
         volumes:

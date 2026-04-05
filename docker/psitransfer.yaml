@@ -1,7 +1,7 @@
 ---
 services:
     psitransfer:
-        image: psitrax/psitransfer
+        image: psitrax/psitransfer:v2.4.1
         container_name: psitransfer
         restart: unless-stopped
         environment:
